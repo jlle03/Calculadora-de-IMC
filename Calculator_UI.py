@@ -69,7 +69,6 @@ class Calculator_UI():
                                           "}"
                                           )
         self.minimizeButton.setIcon(QtGui.QIcon("./assets/minimizeButton.png"))
-        print(QtCore.QFile("/assets/closeButton.png").fileName())
         self.minimizeButton.clicked.connect(self.minimizeApp)
 
         self.closeButton = QtWidgets.QPushButton(self.titleBar)
@@ -88,10 +87,12 @@ class Calculator_UI():
         self.closeButton.setIcon(QtGui.QIcon("./assets/closeButton.png"))
         self.closeButton.clicked.connect(self.closeApp)
         ## -END- Title Buttons
+
         ## -END- Title Bar
 
 
         ## -START- Calculator Frame
+
         ## -START- Labels
         self.calculatorFrame = QtWidgets.QFrame(self.centralWidget)
         self.calculatorFrame.setObjectName("calculatorFrame")
@@ -133,15 +134,15 @@ class Calculator_UI():
 
         ## -START- Inputs
         self.heightRegEx = QtCore.QRegExp(
-                                          "^(?:[1-9]|[1-9][0-9]|[1-9][0-9][0-9])"                      ##... ALTURA
-                                                                                                       ##... máx 3 enteros
+                                          "^(?:\\d){0,3}$"                                 ##... ALTURA
+                                                                                                            ##... máx 3 enteros
                                           )
         self.heightValidator = QtGui.QRegExpValidator(self.heightRegEx)
 
-        self.weightRegEx = QtCore.QRegExp(                                                              ##... PESO
-                                          "^(?:[1-9]|[1-9][0-9]|[1-9][0-9][0-9])(?:[.,]\\d\\d?)?$"                              ##... máx. 3 enteros
-                                                                                                        ##... punto o coma decimal (opcional)
-                                                                                                        ##... máx. 2  decimales (opcional)
+        self.weightRegEx = QtCore.QRegExp(                                                                  ##... PESO
+                                          "^(?:\\d){0,3}(?:[.,]\\d\\d?)?$"          ##... máx. 3 enteros
+                                                                                                            ##... punto o coma decimal (opcional)
+                                                                                                            ##... máx. 2 decimales (opcional)
                                           )
         self.weightValidator = QtGui.QRegExpValidator(self.weightRegEx)
 
@@ -204,10 +205,13 @@ class Calculator_UI():
                                        )
         self.clearButton.clicked.connect(self.clearValues)
         ## -END- Calculator Buttons
+
         ## -END- Calculator Frame
 
 
         ## -START- Result Frame
+
+        ## -START- Background
         self.resultFrameOut = QtWidgets.QFrame(self.centralWidget)
         self.resultFrameOut.setObjectName("resultFrameOut")
         self.resultFrameOut.setGeometry(QtCore.QRect(300, 30, 210, 270))
@@ -222,20 +226,65 @@ class Calculator_UI():
         self.resultFrameIn.setStyleSheet(
                                          "background-color:rgb(40, 40, 40);\n"
                                          )
+        ## -END- Background
 
-        self.resultBMI = QtWidgets.QLabel(self.resultFrameIn)
-        self.resultBMI.setObjectName("resultBMI")
-        self.resultBMI.setGeometry(QtCore.QRect(40, 50, 120, 70))
-        self.resultBMI.setStyleSheet(
-                                     "background-color:none;\n"
-                                     "color: white;\n"
-                                     "font-size:20px;"
-                                     )
-        self.resultBMI.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+        ## -START- Output
+        self.resultBmiNum = QtWidgets.QLabel(self.resultFrameIn)
+        self.resultBmiNum.setObjectName("resultBmiNum")
+        self.resultBmiNum.setGeometry(QtCore.QRect(40, 20, 120, 70))
+        self.resultBmiNum.setStyleSheet(
+                                        "background-color:none;\n"
+                                        "color: white;\n"
+                                        "font-size:20px;"
+                                        )
+        self.resultBmiNum.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+        self.resultBmiNum2 = QtWidgets.QLabel(self.resultFrameIn)
+        self.resultBmiNum2.setObjectName("resultBmiNum2")
+        self.resultBmiNum2.setGeometry(QtCore.QRect(40, 50, 120, 70))
+        self.resultBmiNum2.setStyleSheet(
+                                         "background-color:none;\n"
+                                         "color: white;\n"
+                                         "font-size:18px;"
+                                         )
+        self.resultBmiNum2.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+
+        self.resultBmiCat = QtWidgets.QLabel(self.resultFrameIn)
+        self.resultBmiCat.setObjectName("resultBmiNum2")
+        self.resultBmiCat.setGeometry(QtCore.QRect(40, 100, 120, 70))
+        self.resultBmiCat.setStyleSheet(
+                                        "background-color:none;\n"
+                                        "color: white;\n"
+                                        "font-size:20px;"
+                                        )
+        self.resultBmiCat.setAlignment(QtCore.Qt.AlignHCenter | QtCore.Qt.AlignVCenter)
+        ## -END- Output
+
+
+        ## -START- Info Button
+        self.infoButton = QtWidgets.QPushButton(self.resultFrameIn)
+        self.infoButton.setObjectName("infoButton")
+        self.infoButton.setGeometry(QtCore.QRect(150, 220, 40, 40))
+        self.infoButton.setIcon(QtGui.QIcon("./assets/infoButton.png"))
+        self.infoButton.setStyleSheet(
+                                   "QPushButton{\n"
+                                   "background-color:none;\n"
+                                   "border-radius:6px;\n"
+                                   "}\n"
+                                   "QPushButton:hover{\n"
+                                   "background-color:rgb(70, 70, 70)\n"
+                                   "}"
+                                   )
+        self.infoButton.setToolTip("Rangos del IMC")
+        self.infoButton.clicked.connect(self.displayInfoBmi)
+        ## -END- Info Button
+
         ## -END- Result Frame
 
 
         QtCore.QMetaObject.connectSlotsByName(self)
+
 
     ## -END- Setup Layout
 
@@ -249,7 +298,8 @@ class Calculator_UI():
         self.weightLabel.setText(_translate("weightLabel", "Peso (kg)"))
         self.calculateButton.setText(_translate("calculateButton", "Calcular"))
         self.clearButton.setText(_translate("clearButton", "Borrar"))
-        self.resultBMI.setText(_translate("resultBMI", "Su BMI es:\n"
-                                                       ""))
+        self.resultBmiNum.setText(_translate("resultBmiNum", "En espera"))
+        self.resultBmiNum2.setText(_translate("resultBmiNum2", ""))
+        self.resultBmiCat.setText(_translate("resultBmiCat", ""))
     ## -END- Setup Text
 

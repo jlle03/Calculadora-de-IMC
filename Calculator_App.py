@@ -51,32 +51,33 @@ class Calculator_App(QtWidgets.QMainWindow, Calculator_UI):
             bmiCategory = self.evaluateBMI(bmi)
 
             _translate = QtCore.QCoreApplication.translate
-            self.resultBMI.setText(_translate("resultBMI", "Su BMI es:\n"
-                                                       "{}".format(bmi)))
+            self.resultBmiNum.setText(_translate("resultBmiNum", "Su IMC es:"))
+            self.resultBmiNum2.setText(_translate("resultBmiNum2", "{}".format(bmi)))
+            self.resultBmiCat.setText(_translate("resultBmiCat", "{}".format(bmiCategory)))
 
     def calculateBMI(self):
         try:
             height = float(self.heightInput.text())
             weight = float(self.weightInput.text().replace(",", "."))
 
-            bmi = (weight) / (height * 0.01) ** 2       ##... Fórmula IMC:
+            if height == 0 or weight == 0:
+                self.displayErrorInvalidValue()
+                return None
+
+            else:
+                bmi = (weight) / (height * 0.01) ** 2       ##... Fórmula IMC:
                                                         ##... Peso (en kg) dividido para altura (en m) al cuadrado
 
-            bmi = round(bmi, 2)
-            return bmi
+                bmi = round(bmi, 1)
+                return bmi
 
         except ValueError:
-            print("Error")
-            errorDialog = QtWidgets.QMessageBox(self)
-            errorDialog.setStandardButtons(QtWidgets.QMessageBox.Close)
-            errorDialog.setWindowTitle("Error")
-            errorDialog.setIcon(QtWidgets.QMessageBox.Critical)
-            errorDialog.setText("Inserte valores válidos")
-            errorDialog.show()
+            self.displayErrorInvalidValue()
+            return None
+
 
     def evaluateBMI(self, bmi):
 
-        print(bmi)
         if bmi < 18.5:
             return "Bajo peso"
 
@@ -94,4 +95,32 @@ class Calculator_App(QtWidgets.QMainWindow, Calculator_UI):
         self.weightInput.clear()
         self.setupText()
     ## -END- Calculator Func.
+
+
+    ## -START- Pop-Ups
+    def displayErrorInvalidValue(self):
+        errorDialog = QtWidgets.QMessageBox(self)
+        errorDialog.setWindowTitle("Error")
+        errorDialog.setIcon(QtWidgets.QMessageBox.Critical)
+        errorDialog.setStandardButtons(QtWidgets.QMessageBox.Close)
+        errorDialog.setText("Inserte valores válidos")
+        errorDialog.show()
+
+    def displayInfoBmi(self):
+        bmiInfo = QtWidgets.QMessageBox(self)
+        bmiInfo.setWindowTitle("Información")
+        bmiInfo.setIcon(QtWidgets.QMessageBox.Information)
+        bmiInfo.setStandardButtons(QtWidgets.QMessageBox.Close)
+        bmiInfo.setText("Rangos del Índice de Masa Corporal:\n"
+                        "\n\n"
+                        "Menos de 18.5 = Bajo peso\n"
+                        "\n"
+                        "18.5 - 24.9 = Peso normal\n"
+                        "\n"
+                        "25 - 29.9 = Sobrepeso\n"
+                        "\n"
+                        "Más de 30 = Obesidad"
+                        )
+        bmiInfo.show()
+    ## -END- Pop-Ups
 
