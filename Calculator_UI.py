@@ -132,9 +132,13 @@ class Calculator_UI():
         ## -END- Labels
 
         ## -START- Inputs
-        self.heightValidator = QtGui.QIntValidator()
+        self.heightRegEx = QtCore.QRegExp(
+                                          "^(?:\\d){0,3}"                           ##... ALTURA
+                                                                                    ##... máx 3 enteros
+                                          )
+        self.heightValidator = QtGui.QRegExpValidator(self.heightRegEx)
 
-        self.weightRegEx = QtCore.QRegExp(                                          ##... RegEx
+        self.weightRegEx = QtCore.QRegExp(                                          ##... PESO
                                           "^(?:\\d){0,3}(?:[.,]\\d\\d?)?$"          ##... máx. 3 enteros
                                                                                     ##... punto o coma decimal (opcional)
                                                                                     ##... máx. 2  decimales (opcional)
